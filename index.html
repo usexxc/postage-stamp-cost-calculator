@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Postage Stamp Cost Calculator</title>
+<title>Kalkulator Biaya Perangko</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -58,42 +58,42 @@ footer{margin-top:40px;text-align:center;font-size:12.5px;color:var(--muted)}
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">Crafts &amp; shipping</p>
-    <h1>Postage Stamp Cost Calculator</h1>
-    <p class="sub">Forget how many stamps a lumpy envelope needs? Enter the weight and mail type — see the cost instantly.</p>
+    <p class="eyebrow">Kerajinan &amp; pengiriman</p>
+    <h1>Kalkulator Biaya Perangko</h1>
+    <p class="sub">Lupa harus tempel berapa perangko buat amplop gemuk hasil kerajinan tangan? Masukkan berat dan jenis kiriman — biayanya kelihatan seketika.</p>
   </header>
 
   <div class="grid">
-    <section class="card" aria-label="Calculator">
-      <h2>Estimate</h2>
-      <label for="weight">Package weight</label>
-      <input type="number" id="weight" min="0.1" step="0.1" placeholder="e.g. 2.4" inputmode="decimal" aria-describedby="weightHint">
-      <p class="hint" id="weightHint">Weight in ounces</p>
+    <section class="card" aria-label="Kalkulator">
+      <h2>Estimasi</h2>
+      <label for="weight">Berat paket</label>
+      <input type="number" id="weight" min="0.1" step="0.1" placeholder="cth. 2,4" inputmode="decimal" aria-describedby="weightHint">
+      <p class="hint" id="weightHint">Satuan ons (ounce)</p>
 
-      <label>Mail type</label>
-      <div class="types" id="types" role="radiogroup" aria-label="Mail type"></div>
+      <label>Jenis kiriman</label>
+      <div class="types" id="types" role="radiogroup" aria-label="Jenis kiriman"></div>
 
       <div class="breakdown" id="breakdown" hidden></div>
       <div class="warn" id="warn"></div>
     </section>
 
-    <section class="card" aria-label="History">
-      <h2>Last calculations</h2>
+    <section class="card" aria-label="Riwayat">
+      <h2>Perhitungan terakhir</h2>
       <div class="hist" id="history"></div>
-      <button class="btn" id="clearBtn">Clear History</button>
+      <button class="btn" id="clearBtn">Hapus Riwayat</button>
     </section>
   </div>
 
-  <footer>Rates are fixed USPS-style tiers, baked in for estimation only.</footer>
+  <footer>Tarif memakai tingkatan bergaya USPS yang sudah tertanam, hanya untuk estimasi.</footer>
 </div>
 
 <script>
 'use strict';
-// --- Fixed USPS-style rate tiers (no API) ---
+// --- Tingkatan tarif bergaya USPS (tanpa API) ---
 const TIERS = {
-  letter:   { name: 'First-Class Letter',          base: 0.68, extraPerOz: 0.24, maxOz: 3.5,  maxNote: 'USPS letters max out at 3.5 oz' },
-  envelope: { name: 'First-Class Large Envelope',  base: 1.35, extraPerOz: 0.25, maxOz: 13,   maxNote: 'USPS large envelopes max out at 13 oz' },
-  priority: { name: 'Priority Mail Flat Rate',     base: 9.65, extraPerOz: 0,    maxOz: 70,   maxNote: 'Flat rate up to 70 lbs' }
+  letter:   { name: 'First-Class Letter (Surat)',          base: 0.68, extraPerOz: 0.24, maxOz: 3.5,  maxNote: 'Surat First-Class maksimal 3,5 ons' },
+  envelope: { name: 'First-Class Large Envelope (Amplop Besar)', base: 1.35, extraPerOz: 0.25, maxOz: 13,   maxNote: 'Amplop besar First-Class maksimal 13 ons' },
+  priority: { name: 'Priority Mail Flat Rate',             base: 9.65, extraPerOz: 0,    maxOz: 70,   maxNote: 'Tarif flat hingga 70 lbs (±31 kg)' }
 };
 const ORDER = ['letter', 'envelope', 'priority'];
 const HISTORY_LIMIT = 5;
@@ -101,7 +101,7 @@ const HISTORY_LIMIT = 5;
 let selected = 'letter';
 let history = [];
 
-// --- Render mail type options ---
+// --- Render pilihan jenis kiriman ---
 const typesEl = document.getElementById('types');
 ORDER.forEach(key => {
   const t = TIERS[key];
@@ -109,8 +109,8 @@ ORDER.forEach(key => {
   el.className = 'type' + (key === selected ? ' sel' : '');
   el.setAttribute('role', 'radio');
   el.setAttribute('aria-checked', key === selected ? 'true' : 'false');
-  el.innerHTML = '<div><b>' + t.name + '</b><span class="rate">$' + t.base.toFixed(2) + ' base' +
-    (t.extraPerOz ? ' · +$' + t.extraPerOz.toFixed(2) + '/oz after 1oz' : ' · flat') + '</span></div>' +
+  el.innerHTML = '<div><b>' + t.name + '</b><span class="rate">$' + t.base.toFixed(2) + ' dasar' +
+    (t.extraPerOz ? ' · +$' + t.extraPerOz.toFixed(2) + '/ons setelah 1 ons pertama' : ' · tarif flat') + '</span></div>' +
     '<span>$' + t.base.toFixed(2) + '</span>';
   el.addEventListener('click', () => selectType(key));
   typesEl.appendChild(el);
@@ -126,7 +126,7 @@ function selectType(key) {
   recalc();
 }
 
-// --- Calculation ---
+// --- Perhitungan ---
 function calc(weightOz, key) {
   const t = TIERS[key];
   const overageOz = Math.max(0, weightOz - 1);
@@ -149,10 +149,10 @@ function recalc() {
     return;
   }
 
-  const w = Number(raw);
+  const w = Number(raw.replace(',', '.'));
   if (!isFinite(w) || w <= 0) {
     input.classList.add('invalid');
-    warn.textContent = 'Weight must be a positive number.';
+    warn.textContent = 'Berat harus berupa angka positif.';
     warn.classList.add('show');
     breakdown.hidden = true;
     return;
@@ -163,7 +163,7 @@ function recalc() {
   const r = calc(w, selected);
 
   if (w > t.maxOz) {
-    warn.textContent = t.maxNote + ' — entered ' + w + ' oz may not be mailable.';
+    warn.textContent = t.maxNote + ' — berat ' + String(w).replace('.', ',') + ' ons kemungkinan tidak dapat dikirim.';
     warn.classList.add('show');
   } else {
     warn.classList.remove('show');
@@ -171,18 +171,18 @@ function recalc() {
 
   breakdown.hidden = false;
   breakdown.innerHTML =
-    '<div class="row"><span class="lab">Base rate</span><span>' + formatUSD(r.base) + '</span></div>' +
-    '<div class="row"><span class="lab">Weight overage</span><span>' + (r.overage > 0 ? formatUSD(r.overage) : '—') + '</span></div>' +
-    '<div class="row total"><span>Estimated total</span><span>' + formatUSD(r.total) + '</span></div>';
+    '<div class="row"><span class="lab">Tarif dasar</span><span>' + formatUSD(r.base) + '</span></div>' +
+    '<div class="row"><span class="lab">Tambahan berat</span><span>' + (r.overage > 0 ? formatUSD(r.overage) : '—') + '</span></div>' +
+    '<div class="row total"><span>Total estimasi</span><span>' + formatUSD(r.total) + '</span></div>';
 
-  // push to history on valid input
+  // masukkan ke riwayat saat input valid
   const last = history[0];
   if (!last || last.w !== w || last.type !== selected) {
     addHistory({ w, type: selected, total: r.total });
   }
 }
 
-// --- History (last 5, in-memory) ---
+// --- Riwayat (5 terakhir, di memori) ---
 function addHistory(entry) {
   history = [entry, ...history].slice(0, HISTORY_LIMIT);
   renderHistory();
@@ -196,18 +196,18 @@ function clearHistory() {
 function renderHistory() {
   const el = document.getElementById('history');
   if (history.length === 0) {
-    el.innerHTML = '<p class="empty">No calculations yet. Enter a weight to start.</p>';
+    el.innerHTML = '<p class="empty">Belum ada perhitungan. Masukkan berat untuk mulai.</p>';
     return;
   }
   el.innerHTML = history.map(h => {
     const t = TIERS[h.type];
     return '<div class="h-item">' +
-      '<div class="meta"><span class="tag">' + t.name + '</span><br>' + h.w + ' oz</div>' +
+      '<div class="meta"><span class="tag">' + t.name + '</span><br>' + String(h.w).replace('.', ',') + ' ons</div>' +
       '<span class="cost">' + formatUSD(h.total) + '</span></div>';
   }).join('');
 }
 
-// --- Wire up ---
+// --- Sambungkan event ---
 document.getElementById('weight').addEventListener('input', recalc);
 document.getElementById('clearBtn').addEventListener('click', clearHistory);
 renderHistory();
